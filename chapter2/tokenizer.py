@@ -1,6 +1,10 @@
 import re
 
 
+################################################################################
+##  Basic Tokenizer
+################################################################################
+
 class SimpleTokenizerV1:
     def __init__(self, vocab):
         self.str_to_int = vocab
@@ -88,9 +92,47 @@ def test_tokenizerV2(vocab):
 
 
 
+################################################################################
+##  BPE Tokenizer
+################################################################################
+
+import tiktoken
+
+
+def test_BPE_tokenizer():
+    tokenizer = tiktoken.get_encoding("gpt2")
+
+    # text = (
+    #     "Hello, do you like tea? <|endoftext|> In the sunlit terraces"
+    #     "of someunknownPlace."
+    # )
+
+    text = "Akwirw ier"
+
+    integers = tokenizer.encode(text, allowed_special={"<|endoftext|>"})
+    print(integers)
+
+    for id in integers:
+        print(f"ID: {id} -> {tokenizer.decode([id])} (token)")
+
+    strings = tokenizer.decode(integers)
+    print(strings)
+
+
+
+################################################################################
+##  MAIN    
+################################################################################
+
 if __name__ == "__main__":
+    print("\nLoading outputs for basic tokenizer:\n\n")
     vocab = read_prep_text()
 
     test_tokenizerV1(vocab)
     test_tokenizerV2(vocab)
+
+    print("\n\n################################################################################")
+
+    print("\nLoading outputs for BPE tokenizer:\n\n")
+    test_BPE_tokenizer()
 
