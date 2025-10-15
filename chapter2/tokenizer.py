@@ -1,9 +1,9 @@
-import re
-
-
 ################################################################################
 ##  Basic Tokenizer
 ################################################################################
+
+import re
+
 
 class SimpleTokenizerV1:
     def __init__(self, vocab):
@@ -65,7 +65,7 @@ def read_prep_text():
         return vocab
 
 
-def test_tokenizerV1(vocab):
+def test_tokenizer_v1(vocab):
     tokenizer = SimpleTokenizerV1(vocab)
 
     text = """"It's the last he painted, you know," 
@@ -77,7 +77,7 @@ def test_tokenizerV1(vocab):
     tokenizer.decode(tokenizer.encode(text))
 
 
-def test_tokenizerV2(vocab):
+def test_tokenizer_v2(vocab):
     tokenizer = SimpleTokenizerV2(vocab)
 
     text1 = "Hello, do you like tea?"
@@ -128,8 +128,8 @@ if __name__ == "__main__":
     print("\nLoading outputs for basic tokenizer:\n\n")
     vocab = read_prep_text()
 
-    test_tokenizerV1(vocab)
-    test_tokenizerV2(vocab)
+    test_tokenizer_v1(vocab)
+    test_tokenizer_v2(vocab)
 
     print("\n\n################################################################################")
 
