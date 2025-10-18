@@ -1,5 +1,5 @@
 ################################################################################
-##  Causal Attention
+##  Causal Attention 
 ################################################################################
 
 import torch
@@ -46,10 +46,7 @@ class CausalAttention(nn.Module):
 
 
 
-def test_causal_attention(inputs, d_in, d_out):
-    batch = torch.stack((inputs, inputs), dim=0)
-    print(batch.shape)
-
+def test_causal_attention(batch, d_in, d_out):
     torch.manual_seed(123)
 
     context_length = batch.shape[1]
@@ -60,6 +57,37 @@ def test_causal_attention(inputs, d_in, d_out):
     print(context_vecs)
     print("context_vecs.shape:", context_vecs.shape)
 
+
+
+################################################################################
+##  Multi-Head Attention
+################################################################################
+
+class MultiHeadAttentionWrapper(nn.Module):
+    def __init__(self, d_in, d_out, context_length, dropout, num_heads, qkv_bias=False):
+        super().__init__()
+        self.heads = nn.ModuleList(
+            [CausalAttention(d_in, d_out, context_length, dropout, qkv_bias) 
+             for _ in range(num_heads)]
+        )
+
+    def forward(self, x):
+        return torch.cat([head(x) for head in self.heads], dim=-1)
+
+
+def test_multihead_attention(batch):
+    torch.manual_seed(123)
+
+    context_length = batch.shape[1] # This is the number of tokens
+    d_in, d_out = 3, 2
+    mha = MultiHeadAttentionWrapper(
+        d_in, d_out, context_length, 0.0, num_heads=2
+    )
+
+    context_vecs = mha(batch)
+
+    print(context_vecs)
+    print("context_vecs.shape:", context_vecs.shape)
 
 
 ################################################################################
@@ -79,8 +107,16 @@ if __name__ == "__main__":
     d_in = inputs.shape[1] # the input embedding size, d=3
     d_out = 2 # the output embedding size, d=2
 
+    batch = torch.stack((inputs, inputs), dim=0)
+    print(batch.shape)
+
     print("\nLoading outputs for causal attention:\n\n")
 
-    test_causal_attention(inputs, d_in, d_out)
+    test_causal_attention(batch, d_in, d_out)
+
+    print("\n\n################################################################################")
+
+    print("\nLoading outputs for multi-head attention:\n\n")
+    test_multihead_attention(batch)
 
 
